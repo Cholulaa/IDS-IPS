@@ -7,10 +7,11 @@ def capture_traffic(interface, duration, os_type):
     """Capture traffic from the specified network interface for the given duration."""
     print(f"Capturing on interface: {interface} for {duration} seconds...")
 
-    # Windows requires special permission, ensure WinPcap/Npcap is installed
+    # Windows requires Npcap/WinPcap installed for Scapy to capture packets
     if 'windows' in os_type:
-        print("Ensure WinPcap/Npcap is installed on Windows.")
-    
+        print("Ensure WinPcap or Npcap is installed on Windows.")
+
+    # Capture packets using Scapy
     packets = sniff(iface=interface, timeout=duration)
     return packets
 
@@ -24,12 +25,12 @@ def list_network_interfaces(os_type):
     interfaces = []
 
     if 'windows' in os_type:
-        # On Windows, use psutil for network interfaces
+        # On Windows, use psutil to list network interfaces
         for interface_name, interface_info in psutil.net_if_addrs().items():
             description = interface_info[0].address  # Assuming the first is main (IPv4 or MAC)
             interfaces.append((interface_name, description))
     elif 'linux' in os_type:
-        # On Linux, use psutil or ifconfig/ip command for network interface detection
+        # On Linux, also use psutil to list network interfaces
         for interface_name, interface_info in psutil.net_if_addrs().items():
             description = interface_info[0].address
             interfaces.append((interface_name, description))
